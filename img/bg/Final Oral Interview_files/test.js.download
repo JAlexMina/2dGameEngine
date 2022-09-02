@@ -1,0 +1,331 @@
+/*EvaluationKIT START*/
+var evalkit_jshosted = document.createElement('script');evalkit_jshosted.setAttribute('type', 'text/javascript');evalkit_jshosted.setAttribute('src', 'https://brown.evaluationkit.com/CanvasScripts/brown.js?v=5');document.getElementsByTagName('head')[0].appendChild(evalkit_jshosted);/*EvaluationKIT END*/
+
+
+////////////////////////////////////////////////////
+// DESIGN TOOLS CONFIG                            //
+////////////////////////////////////////////////////
+// Copyright (C) 2016  Utah State University
+var DT_variables = {
+  iframeID: '',
+  // Path to the hosted USU Design Tools
+  path: 'https://designtools.ciditools.com/',
+  templateCourse: '1071142',
+  // OPTIONAL: Button will be hidden from view until launched using shortcut keys
+  hideButton: false,
+  // OPTIONAL: Limit tools loading by users role
+  limitByRole: false, // set to true to limit to roles in the roleArray
+  // adjust roles as needed
+  roleArray: [
+    'student',
+    'teacher',
+    'admin'
+  ],
+  // OPTIONAL: Limit tools to an array of Canvas user IDs
+  limitByUser: true, // Change to true to limit by user
+  // add users to array (Canvas user ID not SIS user ID)
+  userArray: [
+    // DLD
+    '3552337', // Naomi Pariseault
+    '3633612', // Kris Nolte
+    '3351356', // Rebecca Taub
+    '3552505', // John de Szendeffy
+    '3738905', // Christine Baumgarthuber
+    '3352168', // Jim Foley
+    '266751',  // Ed Casey
+    '3352614', // TJ Kalaitzidis
+    '3740181', // Melissa Kane
+    '3740276', // Maggie Vecchione
+    '3788631', // Patrick Heaton - temporary for Summer 2021
+  ]
+};
+
+// Run the necessary code when a page loads
+$(document).ready(function () {
+  'use strict';
+  // This runs code that looks at each page and determines what controls to create
+  $.getScript(DT_variables.path + 'js/master_controls.js', function () {
+    console.log('master_controls.js loaded');
+  });
+});
+////////////////////////////////////////////////////
+// END DESIGN TOOLS CONFIG                        //
+/////////////////////////////////////////////////////
+
+$(function() {
+  // function to wait for an element to exist
+  function waitForElement(elementPath, callBack){
+    window.setTimeout(function(){
+      if($(elementPath).length){
+        callBack(elementPath, $(elementPath));
+      } else {
+        waitForElement(elementPath, callBack);
+      }
+    },500);
+  }
+
+// BEGIN SCRIPT: CANVAS LIST
+  var canvasList = (function() {
+    function canvasList(link, items, cb) {
+      link = addQueryParameter(link, 'per_page=50');
+      if (!cb) { cb = items; items = []; }
+      $.ajax({url: link, dataType: 'json'}).done(function(data, status, resp) {
+        if (status !== 'success') return;
+        var links = parseLinks(resp.getAllResponseHeaders());
+        if (links.next) canvasList(links.next, items.concat(data), cb);
+        else cb(items.concat(data));
+      });
+    }
+
+    function parseLinks(headers) {
+      var links = headers.match(/Link: (.*)/i);
+      if (!links) return {};
+      return links[1].split(',').reduce(function(m, c) {
+        var l = c.split(';').map(function(h) { return h.trim() });
+        m[l[1].replace(/"/g,'').split('=')[1]] = l[0].replace(/<|>/g,'');
+        return m;
+      }, {});
+    }
+
+    function addQueryParameter(link, param) {
+      return link + (link.indexOf('?') >= 0 ? '&' : '?') + param;
+    }
+
+    return canvasList;
+  })();
+
+// END SCRIPT: CANVAS LIST
+
+// BEGIN SCRIPT: ADD USER
+  (function() {
+    /*
+     * This script adds an "Add Users" button to course user pages
+     * that links to https://brown.edu/go/addcanvasusers instead
+     * of providing the normal Canvas user addition service (which
+     * are turned off for all users except admins).
+     *
+     * Leverages jQuery which is included on all Canvas pages.
+     *
+     * @author Sumner Warren
+     */
+
+    /*
+     * Determines if we are on a course's People page.
+     */
+    function peoplePage(cb) {
+      var match = window.location.pathname.match(/courses\/(\d+)\/users$/);
+      if (match !== null)
+        return cb(match[1]);
+    }
+
+    /*
+     * Determines if the current user is a teacher in the given course.
+     */
+    function adminEnrollment(course_id, cb) {
+      var roles = ['TeacherEnrollment'];
+      canvasList('/api/v1/users/self/enrollments', function(enrollments) {
+        if (enrollments.some(function(e) {
+              return e.course_id === course_id && roles.indexOf(e.role) >= 0;
+            }) || (ENV && ENV.permissions && ENV.permissions.add_users_to_course))
+          return cb();
+      });
+    }
+
+    /*
+     * Determines if the current ccourse has a valid SIS id.
+     */
+    function sisCourse(course_id, cb) {
+      $.get('/api/v1/courses/' + course_id, function(course) {
+        if (course && course.sis_course_id.indexOf('brown.') === 0)
+          return cb(course.account_id);
+      });
+    }
+
+    /*
+     * Find Add Brown User LTI url.
+     */
+    function ltiURL(account_id, cb) {
+      $.get('https://lti.brown.edu/brown-users/users.php?action=ltiUrl&accountid=' + account_id, function(tool) {
+        //$.get('https://lti.cis-qas.brown.edu/brown-users/users.php?action=ltiUrl&accountid=' + account_id, function(tool) {
+        if (tool) return cb(tool.id);
+      }, 'json');
+    }
+
+    /*
+     * Adds an "Add User" button (matching the style of the normal one)
+     * that just links to https://brown.edu/go/addcanvasusers.
+     */
+    function addUserButton(course_id, tool_id) {
+      var url = '/courses/' + course_id + '/external_tools/' + tool_id;
+      if (!tool_id) url = 'https://www.brown.edu/go/addcanvasusers';
+      var btn = '<a class="btn btn-primary pull-right icon-plus" id="addBrownUniversityUsers"' +
+          'title="Add/Remove People" href="' + url + '">Add/Remove People</a>';
+      if (!$('#addUsers').length) $('select[name="enrollment_role_id"]').after(btn);
+      else $('#addUsers').before(btn).prev().text('Add/Remove Brown Users').css('margin-left', '5px');
+    }
+
+    /*
+     * Puts all of this together.
+     */
+    peoplePage(function(course) {
+      sisCourse(course, function(account) {
+        adminEnrollment(course, function() {
+          ltiURL(account, function(tool) {
+            addUserButton(course, tool);
+          });
+        });
+      });
+    });
+  })();
+// END SCRIPT: ADD USER
+
+// BEGIN SCRIPT: ADD BADGES
+  (function() {
+    // NOTE: if pasting this code into another script, you'll need to manually change the
+    // next line. Instead of assigning the value null, you need to assign the value of
+    // the Canvabadges domain, i.e. "https://www.canvabadges.org". If you have a custom
+    // domain configured then it'll be something like "https://www.canvabadges.org/_my_site"
+    // instead.
+    var protocol_and_host = "https://www.canvabadges.org";
+    if(!protocol_and_host) {
+      var $scripts = $("script");
+      $("script").each(function() {
+        var src = $(this).attr('src');
+        if(src && src.match(/canvas_profile_badges/)) {
+          var splits = src.split(/\//);
+          protocol_and_host = splits[0] + "//" + splits[2];
+        }
+        var prefix = src && src.match(/\?path_prefix=\/(\w+)/);
+        if(prefix && prefix[1]) {
+          protocol_and_host = protocol_and_host + "/" + prefix[1];
+        }
+      });
+    }
+    if(!protocol_and_host) {
+      console.log("CANVABADGES: Couldn't find a valid protocol and host. Canvabadges will not appear on profile pages until this is fixed.");
+    }
+    var match = location.href.match(/\/(users|about)\/(\d+)$/);
+    if(match && protocol_and_host) {
+      var user_id = match[2];
+      var domain = location.host;
+      var url = protocol_and_host + "/api/v1/badges/public/" + user_id + "/" + encodeURIComponent(domain) + ".json";
+      $.ajax({
+        type: 'GET',
+        dataType: 'jsonp',
+        url: url,
+        success: function(data) {
+          if(data.objects && data.objects.length > 0) {
+            var $box = $("<div/>", {style: 'margin-bottom: 20px;'});
+            $box.append("<h2 class='border border-b'>Badges</h2>");
+            for(idx in data.objects) {
+              var badge = data.objects[idx];
+              var $badge = $("<div/>", {style: 'float: left;'});
+              var link = protocol_and_host + "/badges/criteria/" + badge.config_id + "/" + badge.config_nonce + "?user=" + badge.nonce;
+              var $a = $("<a/>", {href: link});
+              $a.append($("<img/>", {src: badge.image_url, style: 'width: 72px; height: 72px; padding-right: 10px;'}));
+              $badge.append($a);
+              $box.append($badge);
+            }
+            $box.append($("<div/>", {style: 'clear: left'}));
+            $("#edit_profile_form,fieldset#courses,.more_user_information + div").after($box);
+          } else {
+            console.log("CANVABADGES: no badges found for the user: " + user_id + " at " + domain);
+          }
+        },
+        error: function() {
+          console.log("CANVABADGES: badges failed to load, API error response");
+        },
+        timeout: 5000
+      });
+    }
+  })();
+// END SCRIPT: ADD BADGES
+
+// BEGIN SCRIPT: DELETE FOOTER
+  (function() {
+    $('#footer').remove();
+  })();
+// END SCRIPT: DELETE FOOTER
+
+  /*
+   mmestre 8/15/2016 - Function to check if current user has a TeacherEnrollment, if so, display button that links to courses.brown
+   */
+  (function () {
+    canvasList('/api/v1/users/self/enrollments', function (e) {
+      for (i = 0; i < e.length; i++) {
+        if (e[i]['role'] == 'TeacherEnrollment') {
+          var coursesButton = '<span id="coursesButton" style="margin: 0 36px 36px 0;"><a class="Button" style="width:232px;" type="button" target="_blank" href="https://courses.brown.edu">Request a Canvas course site</a></span>';
+          $('.ic-Dashboard-header').append(coursesButton);
+          break; // if we find a TeacherEnrollment, we can stop here
+        }
+      }
+    })
+  })();
+
+  /*
+   mmestre 1/24/2017 - function that displays a warning when users navigate to the syllabus from courses.brown directory
+   */
+  (function () {
+    if(window.location.href.indexOf("files") > -1) {
+      var boot_dismissable = '<p><div class="alert alert-danger alert-dismissable"><i class="icon-warning" aria-hidden="true"></i><a href="#" class="close" data-dismiss="alert" aria-label="close"><span style="font-size:small">Got it. Show me my files!</span> <i class="icon-check" aria-hidden="true"></i></a><strong>Warning!</strong> Do NOT update your courses.brown syllabus file here! Always use <a href="https://courses.brown.edu" target="_blank">courses.brown.edu</a> for syllabus file updates.</div></p>';
+      waitForElement('.ef-main', function () {
+        $("span").filter(function() {
+          return $(this).text() == 'syllabus from courses.brown';
+        }).click(function() {
+          $('.ef-main').hide();
+          $('.ef-header').after(boot_dismissable);
+          $('a.close').click(function() {
+            $('.alert').hide();
+            $('.ef-main').show();
+          });
+        });
+      });
+    }
+  })();
+
+  /*
+   mmestre 4/21/2017 - People page display changes
+   - Remove @brown.edu from Login ID
+   - Change Observing: nobody to Observer
+   */
+  (function () {
+    if (window.location.href.indexOf("users") > -1) {
+      waitForElement('table.roster', function () {
+        $('tr.rosterUser').each(function() {
+          var html = $(this).html();
+          $(this).html(html.replace('@brown.edu', ''));
+        });
+        $('tr.rosterUser').each(function() {
+          var html = $(this).html();
+          $(this).html(html.replace('Observing: nobody', 'Observer'));
+        });
+      });
+    }
+  })();
+
+  /*
+   mmestre 5/2/2017 - function to display info about logout in account menu
+   */
+  (function () {
+    var logoutHelp = '<br /><div style="margin: 0 auto;"><button id="logoutHelpButton">Log Out</button></div><br />';
+    var logoutText = '<div id="logoutText" class="alert alert-danger alert-dismissable" style="margin: 0 auto; display: none;">To log out, completely quit out of your browser. This is especially important if you are on a shared computer.</div>';
+
+    var profile = document.getElementById('global_nav_profile_link');
+
+    if (profile) {
+      profile.addEventListener('click', function () {
+        // check if button and text exist so we don't display duplicates
+        if ( ($('#logoutHelpButton').length == 0) && ($('#logoutText').length == 0)) {
+          $('#global_nav_profile_header').append(logoutHelp).append(logoutText);
+          waitForElement('#logoutHelpButton', function () {
+            $('#logoutHelpButton').click(function () {
+              if ($('#logoutText').css('display') == 'none') {
+                $('#logoutText').show();
+              }
+            });
+          });
+        }
+      });
+    }
+  })();
+}); // END OVERRIDES

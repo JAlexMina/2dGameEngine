@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE obj SYSTEM "pos.dtd">
+<obj>
+    <obj id="-1">
+        <xPos>26.53999999999931</xPos>
+        <yPos>462.2125</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>0.0</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>87.04</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>174.08</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>261.12</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>348.16</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>435.20000000000005</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>522.24</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>609.28</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>696.48</xPos>
+        <yPos>498.48</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>783.3599999999999</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>870.3999999999999</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>957.4399999999998</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1044.4799999999998</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1131.5199999999998</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1218.5599999999997</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1305.5999999999997</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1392.6399999999996</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="0">
+        <xPos>1479.6799999999996</xPos>
+        <yPos>500.0</yPos>
+    </obj>
+    <obj id="1">
+        <xPos>460.6</xPos>
+        <yPos>206.6</yPos>
+    </obj>
+    <obj id="2">
+        <xPos>293.6</xPos>
+        <yPos>301.6</yPos>
+    </obj>
+    <obj id="1">
+        <xPos>220.6</xPos>
+        <yPos>303.6</yPos>
+    </obj>
+    <obj id="2">
+        <xPos>536.6</xPos>
+        <yPos>205.6</yPos>
+    </obj>
+    <obj id="3">
+        <xPos>569.225</xPos>
+        <yPos>443.5</yPos>
+    </obj>
+</obj>

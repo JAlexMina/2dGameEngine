@@ -1,0 +1,39 @@
+(window["canvasWebpackJsonp"]=window["canvasWebpackJsonp"]||[]).push([[3642],{msTH:function(t,a,e){"use strict"
+var n=e("ouhR")
+var r=e.n(n)
+var o=e("Y/W1")
+var s=e.n(o)
+var _=e("gI0r")
+var u=e("HGxv")
+var i=e("8WeW")
+Object(i["a"])(JSON.parse('{"ar":{"user_content_aaf0fb5a":"محتوى المستخدم"},"ca":{"user_content_aaf0fb5a":"Contingut de l\'usuari"},"cy":{"user_content_aaf0fb5a":"Cynnwys Defnyddiwr"},"da":{"user_content_aaf0fb5a":"Brugerindhold"},"da-x-k12":{"user_content_aaf0fb5a":"Brugerindhold"},"de":{"user_content_aaf0fb5a":"Benutzer-Content"},"el":{"user_content_aaf0fb5a":"Περιεχόμενο Χρήστη"},"en-AU":{"user_content_aaf0fb5a":"User Content"},"en-AU-x-unimelb":{"user_content_aaf0fb5a":"User Content"},"en-CA":{"user_content_aaf0fb5a":"User Content"},"en-GB":{"user_content_aaf0fb5a":"User content"},"en-GB-x-lbs":{"user_content_aaf0fb5a":"User content"},"en-GB-x-ukhe":{"user_content_aaf0fb5a":"User content"},"es":{"user_content_aaf0fb5a":"Contenido del usuario"},"es-ES":{"user_content_aaf0fb5a":"Contenido del usuario"},"fa":{"user_content_aaf0fb5a":"محتوای کاربر"},"fi":{"user_content_aaf0fb5a":"Käyttäjän sisältö"},"fr":{"user_content_aaf0fb5a":"Contenu de l\'utilisateur"},"fr-CA":{"user_content_aaf0fb5a":"Contenu de l\'utilisateur"},"he":{"user_content_aaf0fb5a":"תוכן משתמש"},"ht":{"user_content_aaf0fb5a":"Kontni Itilizatè"},"hu":{"user_content_aaf0fb5a":"Felhasználói tartalom"},"is":{"user_content_aaf0fb5a":"Notandaefni"},"it":{"user_content_aaf0fb5a":"Contenuto utente"},"ja":{"user_content_aaf0fb5a":"ユーザーコンテンツ"},"mi":{"user_content_aaf0fb5a":"Ihirangi kaiwhakamahi"},"nb":{"user_content_aaf0fb5a":"Brukerinnhold"},"nb-x-k12":{"user_content_aaf0fb5a":"Brukerinnhold"},"nl":{"user_content_aaf0fb5a":"Gebruikersinhoud"},"nn":{"user_content_aaf0fb5a":"Brukarinnhald"},"pl":{"user_content_aaf0fb5a":"Zawartość użytkownika"},"pt":{"user_content_aaf0fb5a":"Conteúdo do Utilizador"},"pt-BR":{"user_content_aaf0fb5a":"Conteúdo do Usuário"},"ru":{"user_content_aaf0fb5a":"Контент пользователя"},"sl":{"user_content_aaf0fb5a":"Vsebina uporabnika"},"sv":{"user_content_aaf0fb5a":"Användarinnehåll"},"sv-x-k12":{"user_content_aaf0fb5a":"Användarinnehåll"},"th":{"user_content_aaf0fb5a":"เนื้อหาของผู้ใช้"},"tr":{"user_content_aaf0fb5a":"Kullanıcı İçeriği"},"uk":{"user_content_aaf0fb5a":"Контент користувача"},"zh-Hans":{"user_content_aaf0fb5a":"用户内容"},"zh-Hant":{"user_content_aaf0fb5a":"使用者內容"}}'))
+e("jQeR")
+e("0sPK")
+var c=u["default"].scoped("user_content")
+const f={translateMathmlForScreenreaders(t){var a,e
+if(!(null!==(a=ENV)&&void 0!==a&&null!==(e=a.FEATURES)&&void 0!==e&&e.new_math_equation_handling)){const a=r()("<div/>").html(t.attr("x-canvaslms-safe-mathml")).html()
+const e=r()('<span class="hidden-readable"></span>')
+e.html(a)
+return e}},toMediaCommentLink(t){const a=r()(`<a\n        id='media_comment_${Object(_["a"])(r()(t).data("media_comment_id"))}'\n        data-media_comment_type='${Object(_["a"])(r()(t).data("media_comment_type"))}'\n        class='instructure_inline_media_comment ${Object(_["a"])(t.nodeName.toLowerCase())}_comment'\n        data-alt='${Object(_["a"])(r()(t).attr("data-alt"))}'\n      />`)
+a.html(r()(t).html())
+return a},convert(t,a={}){const e=r()("<div />").html(t)
+e.find("video.instructure_inline_media_comment,audio.instructure_inline_media_comment").replaceWith((function(){return f.toMediaCommentLink(this)}))
+e.find("object.instructure_user_content:not(#kaltura_player) embed").remove()
+if(!a.forEditing){e.find("object.instructure_user_content,embed.instructure_user_content").replaceWith((function(){const t=r()(this)
+if(!t.data("uc_snippet")||!t.data("uc_sig"))return this
+const a=s.a.uniqueId("uc_")
+let e="/object_snippet"
+ENV.files_domain&&(e=`//${ENV.files_domain}${e}`)
+const n=r()(`<form\n            action='${Object(_["a"])(e)}'\n            method='post'\n            class='user_content_post_form'\n            target='${Object(_["a"])(a)}'\n            id='form-${Object(_["a"])(a)}'\n          />`)
+n.append(r()("<input type='hidden'/>").attr({name:"object_data",value:t.data("uc_snippet")}))
+n.append(r()("<input type='hidden'/>").attr({name:"s",value:t.data("uc_sig")}))
+r()("body").append(n)
+setTimeout(()=>n.submit(),0)
+return r()(`<iframe\n            class='user_content_iframe'\n            name='${Object(_["a"])(a)}'\n            style='width: ${Object(_["a"])(t.data("uc_width"))}; height: ${Object(_["a"])(t.data("uc_height"))};'\n            frameborder='0'\n            title='${Object(_["a"])(c.t("User Content"))}'\n          />`)}))
+e.find("img.equation_image").each((t,a)=>{const e=r()(a)
+const n=f.translateMathmlForScreenreaders(e)
+e.removeAttr("x-canvaslms-safe-mathml")
+e.after(n)})}return e.html()}}
+a["a"]=f}}])
+
+//# sourceMappingURL=3642-c-37f1c011f8.js.map
